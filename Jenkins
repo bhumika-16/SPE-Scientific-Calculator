@@ -16,7 +16,7 @@ pipeline{
         stage("Docker containerize")
         {
             steps{
-                sh "docker build -t cal-java ."
+                sh "docker build -t calculator-java ."
             }
         }
         stage("push to Dockerhub")
