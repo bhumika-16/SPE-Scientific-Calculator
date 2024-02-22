@@ -1,0 +1,60 @@
+pipeline{
+    agent any
+    stages{
+        stage("Code Fetch")
+        {
+            steps{
+                git url: "https://github.com/DG4558/Calculator.git" ,branch:"master"
+            }
+        }
+        stage("Build and Test Maven")
+        {
+            steps{
+              sh "mvn clean install"
+            }
+        }
+        stage("Docker containerize")
+        {
+            steps{
+                sh "docker build -t cal-java ."
+            }
+        }
+        stage("push to Dockerhub")
+        {
+            steps{
+                withCredentials([usernamePassword(credentialsId:"dockerHub",passwordVariable:"dockerpassword",usernameVariable:"dockerusername")]){
+                    
+                    sh "docker login -u ${env.dockerusername} -p ${env.dockerpassword}"
+                    sh "docker tag cal-java  ${env.dockerusername}/cal-java"
+                    sh "docker push ${env.dockerusername}/cal-java"
+                    
+                }
+            }
+            
+        }
+        stage("deploy")
+        {
+            steps{
+                script {
+                    ansiblePlaybook(
+                        playbook: 'deploy.yml',
+                        inventory: 'inventory'
+                        )
+                }
+            }
+        }
+}
+        post {
+        failure{
+             emailext (
+      to: 'talkingtom.dg@gmail.com',
+      subject: "Build failed",
+      body: "Calculator build failed"
+      
+    )
+               
+        }
+    }
+   
+    
+}
