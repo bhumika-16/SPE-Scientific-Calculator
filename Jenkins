@@ -4,7 +4,7 @@ pipeline{
         stage("Code Fetch")
         {
             steps{
-                git url: "https://github.com/DG4558/Calculator.git" ,branch:"master"
+                git url: "https://github.com/bhumika-16/SPE-Scientific-Calculator.git" ,branch:"master"
             }
         }
         stage("Build and Test Maven")
@@ -16,21 +16,21 @@ pipeline{
         stage("Docker containerize")
         {
             steps{
-                sh "docker build -t cal-java ."
+                sh "docker build -t calculator-java ."
             }
         }
         stage("push to Dockerhub")
         {
             steps{
-                withCredentials([usernamePassword(credentialsId:"dockerHub",passwordVariable:"dockerpassword",usernameVariable:"dockerusername")]){
-                    
+                withCredentials([usernamePassword(credentialsId:"DockerHubCred",passwordVariable:"dockerpassword",usernameVariable:"dockerusername")]){
+
                     sh "docker login -u ${env.dockerusername} -p ${env.dockerpassword}"
-                    sh "docker tag cal-java  ${env.dockerusername}/cal-java"
-                    sh "docker push ${env.dockerusername}/cal-java"
-                    
+                    sh "docker tag calculator-java  ${env.dockerusername}/calculator-java"
+                    sh "docker push ${env.dockerusername}/calculator-java"
+
                 }
             }
-            
+
         }
         stage("deploy")
         {
@@ -44,17 +44,5 @@ pipeline{
             }
         }
 }
-        post {
-        failure{
-             emailext (
-      to: 'talkingtom.dg@gmail.com',
-      subject: "Build failed",
-      body: "Calculator build failed"
-      
-    )
-               
-        }
-    }
-   
-    
+
 }
