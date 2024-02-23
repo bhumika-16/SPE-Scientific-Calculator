@@ -1,4 +1,4 @@
-FROM openjdk:18
+FROM openjdk:21
+ADD ./target/Calculator-1.0-SNAPSHOT-shaded.jar ./
 WORKDIR ./
-COPY ./target/Calculator-1.0-SNAPSHOT-shaded.jar ./
-CMD ["java","-cp","Calculator-1.0-SNAPSHOT-shaded.jar","Calculator"]
+CMD ["java","-jar","Calculator-1.0-SNAPSHOT-shaded.jar"]
