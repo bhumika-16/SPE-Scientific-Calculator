@@ -4,7 +4,7 @@ pipeline{
         stage("Code Fetch")
         {
             steps{
-                git url: "https://github.com/bhumika-16/SPE-Scientific-Calculator.git" ,branch:"master"
+                git url: "https://github.com/bhumika-16/SPE-Scientific-Calculator.git" ,branch:"dev1"
             }
         }
         stage("Build and Test Maven")
